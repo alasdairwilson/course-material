@@ -38,3 +38,32 @@ jobs:
 
       - name: Lint Markdown files
         run: markdownlint '**/*.md' --ignore '*/*/slides/*' --ignore README.md
+    
+  lint-python:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Run Python Markdown
+      uses: alasdairwilson/run-py-markdown@main
+      with:
+        directory: .  # Set the directory you want to scan for Markdown files
+
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.x'
+
+    - name: Install dependencies
+      run: pip install flake8
+
+    - name: Lint Python Code Blocks
+      run: |
+        python script.py .
+      continue-on-error: false
+
+    - name: Check exit code
+      if: failure()
+      run: echo "Script exited with code $?"
